@@ -45,6 +45,7 @@ import org.lineageos.updater.controller.UpdaterController
 import org.lineageos.updater.data.Update
 import org.lineageos.updater.data.UpdateStatus
 import org.lineageos.updater.deviceinfo.DeviceInfoBanner
+import org.lineageos.updater.deviceinfo.DeviceInfoUtils
 import org.lineageos.updater.deviceinfo.UpdateHeadline
 import org.lineageos.updater.preferences.PreferencesActivity
 import org.lineageos.updater.ui.BloomState
@@ -431,7 +432,9 @@ private fun getUpdateHeadline(updates: List<Update>, check: UpdatesCheckState): 
             bloom = BloomState.Failed,
         )
 
-        updates.isNotEmpty() -> UpdateHeadline(
+        updates.any {
+            it.downloadId == Update.LOCAL_ID || it.timestamp > DeviceInfoUtils.buildDateTimestamp
+        } -> UpdateHeadline(
             title = stringResource(R.string.header_update_ready),
             bloom = BloomState.Ready,
         )

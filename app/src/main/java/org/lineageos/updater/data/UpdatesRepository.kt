@@ -44,7 +44,22 @@ class UpdatesRepository(
             networkDataSource.fetchUpdates().map { it.toUpdate() }.filter { filterUpdates(it) }
         }
 
-        if (networkUpdates.isEmpty()) return System.currentTimeMillis()
+        if (networkUpdates.isEmpty()) {
+            // Keep the last build for reinstalling, but drop server builds older than the one
+            // installed: they can't be installed and would keep the list (and headline) non-empty.
+            if (!DeviceInfoUtils.isDowngradingAllowed) {
+                withContext(Dispatchers.IO) {
+                    localDataSource.getUpdates().filter {
+                        it.downloadId != Update.LOCAL_ID && it.downloadUrl != null &&
+                                it.timestamp < DeviceInfoUtils.buildDateTimestamp
+                    }.forEach {
+                        it.file?.delete()
+                        localDataSource.removeUpdate(it.downloadId)
+                    }
+                }
+            }
+            return System.currentTimeMillis()
+        }
 
         val networkIds = networkUpdates.map { it.downloadId }.toSet()
 
