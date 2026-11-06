@@ -1,5 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
 <!--
-     SPDX-FileCopyrightText: The LineageOS Project
+     SPDX-FileCopyrightText: The petalOS Project
      SPDX-License-Identifier: Apache-2.0
 -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
@@ -7,7 +8,9 @@
     android:height="18dp"
     android:viewportWidth="16"
     android:viewportHeight="18">
-  <path
-      android:pathData="M10,16C10,17.105 9.105,18 8,18C6.895,18 6,17.105 6,16H10ZM12,10C12,12.209 10.209,14 8,14C5.791,14 4,12.209 4,10H12ZM16,0C16,4.418 12.418,8 8,8C3.582,8 0,4.418 0,0H16Z"
-      android:fillColor="#000000"/>
+  <group android:scaleX="0.0174" android:scaleY="0.0174" android:translateX="-0.7" android:translateY="1">
+    <path android:pathData="M485,800C428,744 389,716 311,679C213,634 169,596 131,511C107,455 91,414 61,374C48,357 53,348 75,343C174,320 285,374 363,464C433,545 469,678 485,800Z" android:fillColor="#000000"/>
+    <path android:pathData="M515,800C572,744 611,716 689,679C787,634 831,596 869,511C893,455 909,414 939,374C952,357 947,348 925,343C826,320 715,374 637,464C567,545 531,678 515,800Z" android:fillColor="#000000"/>
+    <path android:pathData="M500,772C480,655 432,539 395,467C349,375 372,294 402,238C433,181 480,132 492,122C497,117 503,117 508,122C520,132 567,181 598,238C628,294 651,375 605,467C568,539 520,655 500,772Z" android:fillColor="#000000"/>
+  </group>
 </vector>

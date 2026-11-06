@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+     SPDX-FileCopyrightText: The petalOS Project
+     SPDX-License-Identifier: Apache-2.0
+-->
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="header_android_label">Android</string>
+    <string name="header_security_label">Security</string>
+    <string name="header_update_ready">Update ready</string>
+    <string name="header_downloading">Downloading</string>
+    <string name="header_verifying">Checking the download</string>
+    <string name="header_paused">Update paused</string>
+    <string name="header_percent"><xliff:g id="percent" example="42">%1$d</xliff:g>%%</string>
+</resources>

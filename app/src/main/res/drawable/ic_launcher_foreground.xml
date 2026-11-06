@@ -1,34 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-     SPDX-FileCopyrightText: The LineageOS Project
+     SPDX-FileCopyrightText: The petalOS Project
      SPDX-License-Identifier: Apache-2.0
 -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:aapt="http://schemas.android.com/aapt"
     android:width="108dp"
     android:height="108dp"
     android:viewportWidth="108"
     android:viewportHeight="108">
-  <group>
-    <clip-path
-        android:pathData="M0,0h108v108h-108z"/>
-    <path
-        android:pathData="M108,0H0V108H108V0ZM42,30C39.791,30 38,31.791 38,34V74C38,76.209 39.791,78 42,78H66C68.209,78 70,76.209 70,74V34C70,31.791 68.209,30 66,30H42Z"
-        android:fillColor="#2A3232"
-        android:fillType="evenOdd"/>
-    <path
-        android:pathData="M28.54,28.54m-72,0a72,72 0,1 1,144 0a72,72 0,1 1,-144 0"
-        android:fillAlpha="0.6">
-      <aapt:attr name="android:fillColor">
-        <gradient 
-            android:gradientRadius="72"
-            android:centerX="28.54"
-            android:centerY="28.54"
-            android:type="radial">
-          <item android:offset="0" android:color="#19FFFFFF"/>
-          <item android:offset="1" android:color="#00FFFFFF"/>
-        </gradient>
-      </aapt:attr>
-    </path>
+  <group android:scaleX="0.0652" android:scaleY="0.0652" android:translateX="21.4" android:translateY="24">
+    <path android:pathData="M485,800C428,744 389,716 311,679C213,634 169,596 131,511C107,455 91,414 61,374C48,357 53,348 75,343C174,320 285,374 363,464C433,545 469,678 485,800Z" android:fillColor="#AF98D4"/>
+    <path android:pathData="M515,800C572,744 611,716 689,679C787,634 831,596 869,511C893,455 909,414 939,374C952,357 947,348 925,343C826,320 715,374 637,464C567,545 531,678 515,800Z" android:fillColor="#AF98D4"/>
+    <path android:pathData="M500,772C480,655 432,539 395,467C349,375 372,294 402,238C433,181 480,132 492,122C497,117 503,117 508,122C520,132 567,181 598,238C628,294 651,375 605,467C568,539 520,655 500,772Z" android:fillColor="#F5DCEB"/>
   </group>
 </vector>

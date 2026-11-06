@@ -30,7 +30,6 @@ fun UpdateList(
     if (items.isEmpty()) {
         if (!isUpdatesCheckStatusVisible) {
             UpdateZeroStatePreference(
-                text = stringResource(R.string.updates_zero_state_title),
                 description = stringResource(R.string.updates_zero_state_description),
             )
         }

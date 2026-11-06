@@ -15,6 +15,7 @@ object DeviceInfoUtils : SettingsLibDeviceInfoUtils() {
     private const val PROP_ALLOW_MAJOR_UPGRADES = "lineage.updater.allow_major_upgrades"
     private const val PROP_BUILD_DATE = "ro.build.date.utc"
     private const val PROP_BUILD_VERSION = "ro.lineage.build.version"
+    private const val PROP_PETAL_VERSION = "ro.petal.version"
     private const val PROP_BUILD_VERSION_INCREMENTAL = "ro.build.version.incremental"
     private const val PROP_DEVICE = "ro.lineage.device"
     private const val PROP_NEXT_DEVICE = "ro.updater.next_device"
@@ -34,7 +35,10 @@ object DeviceInfoUtils : SettingsLibDeviceInfoUtils() {
     val buildDateTimestamp: Long = SystemProperties.getLong(PROP_BUILD_DATE, 0)
 
     @JvmStatic
-    val buildVersion: String = SystemProperties.get(PROP_BUILD_VERSION, "")
+    val buildVersion: String = SystemProperties.get(
+        PROP_PETAL_VERSION,
+        SystemProperties.get(PROP_BUILD_VERSION, ""),
+    )
 
     @JvmStatic
     val buildVersionIncremental: String = SystemProperties.get(PROP_BUILD_VERSION_INCREMENTAL, "")

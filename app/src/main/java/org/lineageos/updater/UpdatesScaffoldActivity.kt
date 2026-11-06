@@ -37,7 +37,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.android.settingslib.spa.framework.compose.LocalNavController
 import com.android.settingslib.spa.framework.compose.NavControllerWrapper
-import com.android.settingslib.spa.framework.theme.SettingsTheme
 import com.android.settingslib.spa.widget.preference.Preference
 import com.android.settingslib.spa.widget.preference.PreferenceModel
 import com.android.settingslib.spa.widget.scaffold.SettingsScaffold
@@ -46,7 +45,10 @@ import org.lineageos.updater.controller.UpdaterController
 import org.lineageos.updater.data.Update
 import org.lineageos.updater.data.UpdateStatus
 import org.lineageos.updater.deviceinfo.DeviceInfoBanner
+import org.lineageos.updater.deviceinfo.UpdateHeadline
 import org.lineageos.updater.preferences.PreferencesActivity
+import org.lineageos.updater.ui.BloomState
+import org.lineageos.updater.ui.PetalTheme
 import org.lineageos.updater.updates.UpdateList
 import org.lineageos.updater.updates.action.AlertDialogState
 import org.lineageos.updater.updates.action.UpdateActionDialog
@@ -54,6 +56,7 @@ import org.lineageos.updater.updates.action.UpdateActionHandler
 import org.lineageos.updater.updates.state.UpdateItemStateMapper
 import org.lineageos.updater.updatescheck.UpdatesCheck
 import org.lineageos.updater.updatescheck.UpdatesCheckModel
+import org.lineageos.updater.updatescheck.UpdatesCheckState
 import org.lineageos.updater.updatescheck.rememberUpdatesCheckUiState
 
 abstract class UpdatesScaffoldActivity : ComponentActivity() {
@@ -76,7 +79,7 @@ abstract class UpdatesScaffoldActivity : ComponentActivity() {
             }
 
             CompositionLocalProvider(LocalNavController provides navController) {
-                SettingsTheme {
+                PetalTheme {
                     val uiState by viewModel.uiState.collectAsState()
                     UpdatesScaffoldContent(
                         uiState = uiState,
@@ -124,6 +127,7 @@ private fun UpdatesScaffoldContent(
     onControllerStateChanged: () -> Unit,
 ) {
     val title = getTitleForUpdateStatus(uiState.updates)
+    val headline = getUpdateHeadline(uiState.updates, uiState.updatesCheckModel.state)
 
     val actionDialogState = remember { mutableStateOf<AlertDialogState?>(null) }
     actionDialogState.value?.let { dialog ->
@@ -137,6 +141,7 @@ private fun UpdatesScaffoldContent(
         if (isWideScreen()) {
             WideUpdatesScaffold(
                 paddingValues = paddingValues,
+                headline = headline,
                 updatesCheckModel = uiState.updatesCheckModel,
                 updates = uiState.updates,
                 updaterController = updaterController,
@@ -150,6 +155,7 @@ private fun UpdatesScaffoldContent(
         } else {
             UpdatesScaffold(
                 paddingValues = paddingValues,
+                headline = headline,
                 updatesCheckModel = uiState.updatesCheckModel,
                 updates = uiState.updates,
                 updaterController = updaterController,
@@ -167,6 +173,7 @@ private fun UpdatesScaffoldContent(
 @Composable
 private fun WideUpdatesScaffold(
     paddingValues: PaddingValues,
+    headline: UpdateHeadline,
     updatesCheckModel: UpdatesCheckModel,
     updates: List<Update>,
     updaterController: UpdaterController?,
@@ -189,6 +196,7 @@ private fun WideUpdatesScaffold(
             )
     ) {
         UpdatesInformationPane(
+            headline = headline,
             modifier = Modifier
                 .weight(1f)
                 .fillMaxHeight()
@@ -217,6 +225,7 @@ private fun WideUpdatesScaffold(
 @Composable
 private fun UpdatesScaffold(
     paddingValues: PaddingValues,
+    headline: UpdateHeadline,
     updatesCheckModel: UpdatesCheckModel,
     updates: List<Update>,
     updaterController: UpdaterController?,
@@ -233,7 +242,7 @@ private fun UpdatesScaffold(
             .padding(paddingValues)
             .verticalScroll(rememberScrollState())
     ) {
-        UpdatesInformationPane()
+        UpdatesInformationPane(headline = headline)
         UpdatesActionPane(
             model = updatesCheckModel,
             updates = updates,
@@ -250,9 +259,10 @@ private fun UpdatesScaffold(
 
 @Composable
 private fun UpdatesInformationPane(
+    headline: UpdateHeadline,
     modifier: Modifier = Modifier,
 ) {
-    DeviceInfoBanner(modifier = modifier)
+    DeviceInfoBanner(headline = headline, modifier = modifier)
 }
 
 @Composable
@@ -360,6 +370,76 @@ private fun UpdatesFooter(
             override val summary = { preferencesSummary }
             override val onClick = onPreferencesClick
         })
+    }
+}
+
+/** One plain sentence for what's happening, and the bloom state that shows the same thing. */
+@Composable
+private fun getUpdateHeadline(updates: List<Update>, check: UpdatesCheckState): UpdateHeadline {
+    val active = updates.firstOrNull { it.status.isInProgress }
+    val percent = active?.let { stringResource(R.string.header_percent, it.progress) }
+    val failed = updates.any {
+        it.status == UpdateStatus.INSTALLATION_FAILED ||
+                it.status == UpdateStatus.VERIFICATION_FAILED
+    }
+
+    return when {
+        updates.any { it.status == UpdateStatus.UPDATED_NEED_REBOOT } -> UpdateHeadline(
+            title = stringResource(R.string.installing_update_finished),
+            bloom = BloomState.Finished,
+        )
+
+        failed -> UpdateHeadline(
+            title = stringResource(R.string.installing_update_error),
+            bloom = BloomState.Failed,
+        )
+
+        active != null -> UpdateHeadline(
+            title = stringResource(
+                when (active.status) {
+                    UpdateStatus.INSTALLING,
+                    UpdateStatus.INSTALLATION_SUSPENDED -> R.string.installing_update
+
+                    UpdateStatus.VERIFYING -> R.string.header_verifying
+                    UpdateStatus.PAUSED,
+                    UpdateStatus.PAUSED_ERROR -> R.string.header_paused
+
+                    else -> R.string.header_downloading
+                },
+            ),
+            detail = percent,
+            bloom = BloomState.Progress(
+                fraction = active.progress / 100f,
+                paused = active.status == UpdateStatus.PAUSED ||
+                        active.status == UpdateStatus.PAUSED_ERROR ||
+                        active.status == UpdateStatus.INSTALLATION_SUSPENDED,
+            ),
+        )
+
+        check == UpdatesCheckState.Checking -> UpdateHeadline(
+            title = stringResource(R.string.checking_for_updates),
+            bloom = BloomState.Searching,
+        )
+
+        check == UpdatesCheckState.NoInternet -> UpdateHeadline(
+            title = stringResource(R.string.check_your_internet_connection),
+            bloom = BloomState.Failed,
+        )
+
+        check == UpdatesCheckState.Error -> UpdateHeadline(
+            title = stringResource(R.string.updates_check_failed),
+            bloom = BloomState.Failed,
+        )
+
+        updates.isNotEmpty() -> UpdateHeadline(
+            title = stringResource(R.string.header_update_ready),
+            bloom = BloomState.Ready,
+        )
+
+        else -> UpdateHeadline(
+            title = stringResource(R.string.updates_zero_state_title),
+            bloom = BloomState.Resting,
+        )
     }
 }
 

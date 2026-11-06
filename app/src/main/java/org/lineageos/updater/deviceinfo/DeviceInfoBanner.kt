@@ -24,14 +24,15 @@ import com.android.settingslib.spa.debug.UiModePreviews
 import com.android.settingslib.spa.framework.theme.SettingsDimension
 import com.android.settingslib.spa.framework.theme.SettingsRadius
 import com.android.settingslib.spa.framework.theme.SettingsShape.CornerExtraLarge1
-import com.android.settingslib.spa.framework.theme.SettingsTheme
+import org.lineageos.updater.ui.BloomState
+import org.lineageos.updater.ui.PetalTheme
 import org.lineageos.updater.deviceinfo.actions.DeviceInfoActionButtons
 import org.lineageos.updater.deviceinfo.actions.DeviceInfoTvAction
 import org.lineageos.updater.util.StringUtil
 import java.util.Date
 
 @Composable
-fun DeviceInfoBanner(modifier: Modifier = Modifier) {
+fun DeviceInfoBanner(headline: UpdateHeadline, modifier: Modifier = Modifier) {
     val context = LocalContext.current
     val configuration = LocalConfiguration.current
     val locale = remember(context, configuration.locales) { StringUtil.getCurrentLocale(context) }
@@ -47,6 +48,7 @@ fun DeviceInfoBanner(modifier: Modifier = Modifier) {
     }
 
     DeviceInfoBanner(
+        headline = headline,
         buildVersion = buildVersion,
         androidVersion = androidVersion,
         buildDate = buildDate,
@@ -57,6 +59,7 @@ fun DeviceInfoBanner(modifier: Modifier = Modifier) {
 
 @Composable
 fun DeviceInfoBanner(
+    headline: UpdateHeadline,
     buildVersion: String,
     androidVersion: String,
     buildDate: String,
@@ -72,6 +75,7 @@ fun DeviceInfoBanner(
             .padding(SettingsDimension.itemPadding)
     ) {
         UpdaterCard(
+            headline = headline,
             buildVersion = buildVersion,
             androidVersion = androidVersion,
             buildDate = buildDate,
@@ -107,12 +111,13 @@ fun DeviceInfoBanner(
 @UiModePreviews
 @Composable
 private fun DeviceInfoBannerPreview() {
-    SettingsTheme {
+    PetalTheme {
         DeviceInfoBanner(
-            buildVersion = "23.2",
+            headline = UpdateHeadline(title = "No updates available", bloom = BloomState.Resting),
+            buildVersion = "1.0.1",
             androidVersion = "16",
-            buildDate = "Feb 20",
-            securityPatch = "Feb 2026",
+            buildDate = "Oct 29",
+            securityPatch = "Aug 2026",
         )
     }
 }

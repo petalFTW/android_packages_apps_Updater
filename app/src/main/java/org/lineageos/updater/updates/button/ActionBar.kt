@@ -9,15 +9,16 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Pause
 import androidx.compose.material.icons.outlined.PlayArrow
+import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilledIconButton
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.OutlinedButton
@@ -26,12 +27,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.unit.dp
 import com.android.settingslib.spa.debug.UiModePreviews
 import com.android.settingslib.spa.framework.theme.SettingsDimension
 import com.android.settingslib.spa.framework.theme.SettingsSpace
 import com.android.settingslib.spa.framework.theme.SettingsTheme
 import com.android.settingslib.spa.widget.scaffold.MoreOptionsAction
 import com.android.settingslib.spa.widget.scaffold.MoreOptionsScope
+
+private val TouchTarget = 48.dp
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -48,8 +52,9 @@ fun ActionBar(
     ) {
         buttons.forEach { button ->
             when (button) {
-                is ActionBarButton.Tonal -> FilledTonalButton(
+                is ActionBarButton.Tonal -> Button(
                     onClick = button.onClick,
+                    modifier = Modifier.heightIn(min = TouchTarget),
                     shapes = ButtonDefaults.shapes(),
                     enabled = button.enabled,
                 ) {
@@ -58,6 +63,7 @@ fun ActionBar(
 
                 is ActionBarButton.Outlined -> OutlinedButton(
                     onClick = button.onClick,
+                    modifier = Modifier.heightIn(min = TouchTarget),
                     shapes = ButtonDefaults.shapes(),
                     enabled = button.enabled,
                 ) {

@@ -13,7 +13,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
 import com.android.settingslib.spa.framework.compose.LocalNavController
 import com.android.settingslib.spa.framework.compose.NavControllerWrapper
-import com.android.settingslib.spa.framework.theme.SettingsTheme
+import org.lineageos.updater.ui.PetalTheme
 
 class PreferencesActivity : ComponentActivity() {
 
@@ -28,7 +28,7 @@ class PreferencesActivity : ComponentActivity() {
                 }
             }
             CompositionLocalProvider(LocalNavController provides navController) {
-                SettingsTheme {
+                PetalTheme {
                     PreferencesScreen()
                 }
             }

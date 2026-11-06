@@ -9,13 +9,10 @@ import android.content.Context
 import android.os.SystemClock
 import android.text.format.DateFormat
 import android.text.format.DateUtils
-import androidx.annotation.RawRes
-import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.MaterialTheme
@@ -31,22 +28,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
-import com.airbnb.lottie.compose.LottieConstants
 import com.android.settingslib.spa.framework.theme.SettingsDimension
-import com.android.settingslib.spa.widget.ui.SettingsBody
 import kotlinx.coroutines.delay
 import org.lineageos.updater.R
-import org.lineageos.updater.ui.Lottie
 import java.util.Date
 
 private const val MIN_CHECKING_DURATION_MILLIS = 2_000L
-
-// Matches SettingsLib's expressive zero-state background size.
-private val AnimationSize = 160.dp
 
 sealed interface UpdatesCheckState {
     data object Idle : UpdatesCheckState
@@ -91,26 +79,6 @@ fun UpdatesCheck(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(SettingsDimension.itemPaddingVertical),
     ) {
-        when (uiState.displayedState) {
-            UpdatesCheckState.Idle -> Unit
-            UpdatesCheckState.Checking -> StatusContent(
-                R.raw.sysupdater_progress,
-                R.string.checking_for_updates,
-            )
-
-            UpdatesCheckState.NoInternet -> StatusContent(
-                R.raw.sysupdater_error,
-                R.string.check_your_internet_connection,
-                iterations = 1,
-            )
-
-            UpdatesCheckState.Error -> StatusContent(
-                R.raw.sysupdater_error,
-                R.string.updates_check_failed,
-                iterations = 1,
-            )
-        }
-
         if (model.canCheckForUpdates && uiState.displayedState !is UpdatesCheckState.Checking) {
             CheckForUpdatesButton(onClick = onCheckClick)
         }
@@ -121,6 +89,7 @@ fun UpdatesCheck(
                 .fillMaxWidth()
                 .padding(end = SettingsDimension.itemPaddingEnd),
             style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.End,
         )
     }
@@ -136,34 +105,10 @@ private fun CheckForUpdatesButton(
         modifier = modifier.fillMaxWidth(),
         colors = ButtonDefaults.filledTonalButtonColors(
             containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
+            contentColor = MaterialTheme.colorScheme.onSurface,
         ),
     ) {
         Text(text = stringResource(R.string.check_for_updates))
-    }
-}
-
-/**
- * Shows the animated status illustration and its matching message.
- */
-@Composable
-private fun StatusContent(
-    @RawRes animationResId: Int,
-    @StringRes textResId: Int,
-    iterations: Int = LottieConstants.IterateForever,
-) {
-    val text = stringResource(textResId)
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(SettingsDimension.itemPaddingVertical),
-    ) {
-        Lottie(
-            resId = animationResId,
-            modifier = Modifier
-                .size(AnimationSize)
-                .semantics { contentDescription = text },
-            iterations = iterations,
-        )
-        SettingsBody(text)
     }
 }
 
