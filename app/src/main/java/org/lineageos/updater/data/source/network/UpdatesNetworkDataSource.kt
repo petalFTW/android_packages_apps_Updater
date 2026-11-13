@@ -46,6 +46,8 @@ class UpdatesNetworkDataSource(private val context: Context) {
             response.body?.string() ?: throw IOException("Empty response body")
         }
 
+        // -exp builds are betas for the website only, never offered as an update
         return Json.decodeFromString<List<NetworkUpdate>>(responseBody)
+            .filterNot { it.version.contains("-exp", ignoreCase = true) }
     }
 }
